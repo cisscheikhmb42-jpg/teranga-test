@@ -1,26 +1,129 @@
 @import "tailwindcss";
 
+/* Couleurs de la marque. Le mode sombre suit le réglage du téléphone ou de l'ordinateur. */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  color-scheme: light dark;
+  --fond: #ffffff;
+  --surface: #eef2f7;
+  --carte: #ffffff;
+  --texte: #14213d;
+  --doux: color-mix(in srgb, #14213d 74%, #ffffff);
+  --trait: color-mix(in srgb, #14213d 16%, transparent);
+  --bug-texte: #c93b3b;
+  --valide-texte: #1e7f52;
+  --focus: #14213d;
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --fond: #14213d;
+    --surface: color-mix(in srgb, #ffffff 6%, #14213d);
+    --carte: color-mix(in srgb, #ffffff 10%, #14213d);
+    --texte: #ffffff;
+    --doux: color-mix(in srgb, #eef2f7 78%, #14213d);
+    --trait: color-mix(in srgb, #ffffff 20%, transparent);
+    --bug-texte: color-mix(in srgb, #c93b3b 45%, #ffffff);
+    --valide-texte: color-mix(in srgb, #1e7f52 40%, #ffffff);
+    --focus: #ffc93c;
   }
 }
 
+@theme inline {
+  --color-nuit: #14213d;
+  --color-signal: #ffc93c;
+  --color-brume: #eef2f7;
+  --color-bug: #c93b3b;
+  --color-valide: #1e7f52;
+  --color-fond: var(--fond);
+  --color-surface: var(--surface);
+  --color-carte: var(--carte);
+  --color-texte: var(--texte);
+  --color-doux: var(--doux);
+  --color-trait: var(--trait);
+  --color-bug-texte: var(--bug-texte);
+  --color-valide-texte: var(--valide-texte);
+  --font-titre: var(--font-bricolage), system-ui, sans-serif;
+  --font-texte: var(--font-atkinson), system-ui, sans-serif;
+}
+
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--fond);
+  color: var(--texte);
+  font-family: var(--font-texte);
+  font-size: 1.0625rem;
+  line-height: 1.6;
+}
+
+h1,
+h2,
+h3 {
+  font-family: var(--font-titre);
+  line-height: 1.1;
+  text-wrap: balance;
+}
+
+:focus-visible {
+  outline: 3px solid var(--focus);
+  outline-offset: 2px;
+}
+
+/* Le ruban de chantier en haut de chaque page. */
+.ruban {
+  height: 14px;
+  background: repeating-linear-gradient(
+    -45deg,
+    #ffc93c 0 16px,
+    #14213d 16px 32px
+  );
+}
+
+.bouton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 3rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 0.5rem;
+  border: 2px solid transparent;
+  font-family: var(--font-titre);
+  font-weight: 700;
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  cursor: pointer;
+}
+
+.bouton-signal {
+  background: #ffc93c;
+  color: #14213d;
+  border-color: #14213d;
+}
+.bouton-signal:hover {
+  background: #ffd766;
+}
+
+.bouton-contour {
+  border-color: currentColor;
+}
+.bouton-contour:hover {
+  background: color-mix(in srgb, currentColor 10%, transparent);
+}
+
+.bouton:disabled {
+  opacity: 0.6;
+  cursor: progress;
+}
+
+.champ {
+  width: 100%;
+  min-height: 3rem;
+  padding: 0.6rem 0.8rem;
+  border-radius: 0.5rem;
+  border: 2px solid var(--trait);
+  background: var(--carte);
+  color: var(--texte);
+  font: inherit;
+}
+.champ:hover {
+  border-color: var(--doux);
 }
