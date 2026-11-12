@@ -1,7 +1,7 @@
 // Informations générales du site : à modifier ici, elles se répercutent partout.
 
-// Remplacez les X par votre numéro WhatsApp (sans espace, sans +).
-export const WHATSAPP_URL = "https://wa.me/221XXXXXXXXX";
+// Numéro WhatsApp : indicatif 221 puis le numéro, sans espace ni +.
+export const WHATSAPP_URL = "https://wa.me/221784558401";
 
 export const FORMULES = [
   {
