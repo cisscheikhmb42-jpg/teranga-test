@@ -3,14 +3,17 @@ import { lireDuScript } from "@/lib/script";
 
 export type Bug = {
   numero: number;
+  date?: string;
   titre: string;
   gravite: string;
-  etapes: string;
+  /** Liste d'étapes (le script peut aussi renvoyer un seul texte, une étape par ligne). */
+  etapes: string[] | string;
   attendu: string;
   obtenu: string;
   appareil: string;
   navigateur: string;
-  capture: boolean;
+  /** Adresse de l'image, ou vide s'il n'y a pas de capture. */
+  capture?: string;
   suggestion: string;
 };
 
@@ -63,6 +66,6 @@ export async function chargerRapport(code: string): Promise<Rapport | null> {
       diagnostic: (reponse.diagnostic as Rapport["diagnostic"]) ?? null,
     };
   }
-  if (reponse.introuvable) return null;
-  throw new Error(`Le script n'a pas renvoyé le rapport : ${reponse.error}`);
+  // Le script a répondu, mais sans rapport : ce code mission n'existe pas.
+  return null;
 }

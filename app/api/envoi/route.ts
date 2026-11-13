@@ -14,7 +14,7 @@ const CHAMPS = {
     facultatifs: [],
   },
   bug: {
-    requis: ["code", "nom", "whatsapp", "titre", "gravite", "attendu", "obtenu", "appareil", "navigateur"],
+    requis: ["code", "testeur", "whatsappTesteur", "titre", "gravite", "attendu", "obtenu", "appareil", "navigateur"],
     facultatifs: [],
   },
 } as const;
@@ -33,6 +33,8 @@ const LIBELLES: Record<string, string> = {
   android: "la version d'Android",
   disponibilite: "la disponibilité",
   code: "le code mission",
+  testeur: "votre nom",
+  whatsappTesteur: "votre numéro WhatsApp",
   titre: "le titre du bug",
   gravite: "la gravité",
   attendu: "le résultat attendu",
@@ -42,6 +44,7 @@ const LIBELLES: Record<string, string> = {
 };
 
 // 3 Mo d'image donnent environ 4 millions de caractères une fois encodés en base64.
+// La capture arrive sous la forme « data:image/jpeg;base64,… ».
 const CAPTURE_MAX = 4_100_000;
 
 function refus(error: string, status: number) {
@@ -78,7 +81,8 @@ export async function POST(request: Request) {
   if (manquant) {
     return refus(`Il manque ${LIBELLES[manquant]}. Complétez ce champ puis renvoyez le formulaire.`, 400);
   }
-  if (String(donnees.whatsapp).replace(/\D/g, "").length < 9) {
+  const numero = String(type === "bug" ? donnees.whatsappTesteur : donnees.whatsapp);
+  if (numero.replace(/\D/g, "").length < 9) {
     return refus(
       "Le numéro WhatsApp semble incomplet. Vérifiez qu'il contient au moins 9 chiffres, puis renvoyez le formulaire.",
       400,
@@ -105,6 +109,9 @@ export async function POST(request: Request) {
     if (typeof corps.capture === "string" && corps.capture !== "") {
       if (corps.capture.length > CAPTURE_MAX) {
         return refus("La capture d'écran est trop lourde (3 Mo maximum). Choisissez une image plus légère.", 400);
+      }
+      if (!/^data:image\/(jpeg|png|webp);base64,/.test(corps.capture)) {
+        return refus("La capture d'écran n'est pas une image lisible. Choisissez une image JPEG ou PNG.", 400);
       }
       donnees.capture = corps.capture;
       donnees.captureType = texte(corps.captureType);

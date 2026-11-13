@@ -13,7 +13,6 @@ function adresse() {
 export type ReponseScript = {
   ok?: boolean;
   error?: string;
-  introuvable?: boolean;
   [cle: string]: unknown;
 };
 

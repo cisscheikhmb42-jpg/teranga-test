@@ -26,11 +26,17 @@ const STYLE_STATUT: Record<string, string> = {
 };
 
 /** Découpe la cellule « Étapes » (une étape par ligne) et retire une numérotation tapée à la main. */
-function listeEtapes(etapes: string) {
-  return etapes
-    .split("\n")
-    .map((e) => e.replace(/^\s*\d+\s*[.)\-:]\s*/, "").trim())
+function listeEtapes(etapes: string[] | string | undefined) {
+  const lignes = Array.isArray(etapes) ? etapes : String(etapes ?? "").split("\n");
+  return lignes
+    .map((e) => String(e).replace(/^\s*\d+\s*[.)\-:]\s*/, "").trim())
     .filter(Boolean);
+}
+
+/** « 2026-11-13T10:00:00Z » devient « 13/11/2026 » ; une date déjà lisible est gardée telle quelle. */
+function dateCourte(date?: string) {
+  const iso = /^(\d{4})-(\d{2})-(\d{2})/.exec(date ?? "");
+  return iso ? `${iso[3]}/${iso[2]}/${iso[1]}` : String(date ?? "").trim().slice(0, 10);
 }
 
 function Message({ titre, children }: { titre: string; children: React.ReactNode }) {
@@ -49,9 +55,9 @@ function ContenuRapport({ rapport }: { rapport: Rapport }) {
   );
   const dates =
     mission.debut && mission.fin
-      ? `du ${mission.debut} au ${mission.fin}`
+      ? `du ${dateCourte(mission.debut)} au ${dateCourte(mission.fin)}`
       : mission.debut
-        ? `depuis le ${mission.debut}`
+        ? `depuis le ${dateCourte(mission.debut)}`
         : "à définir";
 
   return (
@@ -121,7 +127,7 @@ function ContenuRapport({ rapport }: { rapport: Rapport }) {
               Pré-diagnostic automatique
             </h2>
             {diagnostic.date && (
-              <p className="text-sm text-doux">Analyse du {diagnostic.date}.</p>
+              <p className="text-sm text-doux">Analyse du {dateCourte(diagnostic.date)}.</p>
             )}
           </div>
           <Scores scores={diagnostic} />
@@ -156,9 +162,10 @@ function ContenuRapport({ rapport }: { rapport: Rapport }) {
                   appareil={bug.appareil}
                   navigateur={bug.navigateur}
                   suggestion={bug.suggestion}
+                  date={dateCourte(bug.date)}
                   capture={
-                    bug.capture
-                      ? `/api/capture?code=${mission.code}&n=${bug.numero}`
+                    typeof bug.capture === "string" && /^https:\/\//.test(bug.capture)
+                      ? bug.capture
                       : undefined
                   }
                 />

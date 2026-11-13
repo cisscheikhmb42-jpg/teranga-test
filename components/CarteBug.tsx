@@ -17,6 +17,8 @@ type Props = {
   obtenu: string;
   appareil: string;
   navigateur?: string;
+  /** Date du signalement, déjà mise en forme. */
+  date?: string;
   /** Adresse de la capture d'écran, si elle existe. */
   capture?: string;
   suggestion?: string;
@@ -34,6 +36,7 @@ export function CarteBug({
   obtenu,
   appareil,
   navigateur,
+  date,
   capture,
   suggestion,
 }: Props) {
@@ -83,13 +86,24 @@ export function CarteBug({
         {capture && (
           <div className="border-t border-nuit/15 pt-4">
             <p className={`mb-2 ${etiquette}`}>Capture d&apos;écran</p>
-            {/* Image servie par notre route /api/capture : pas d'optimisation Next nécessaire. */}
+            {/* Image hébergée ailleurs (Google Drive) : on l'affiche telle quelle. */}
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
               src={capture}
               alt={`Capture d'écran du bug nº ${numero} : ${titre}`}
+              referrerPolicy="no-referrer"
               className="max-h-[32rem] w-auto max-w-full rounded border border-nuit/20"
             />
+            <p className="mt-2 text-sm print:hidden">
+              <a
+                href={capture}
+                target="_blank"
+                rel="noreferrer"
+                className="underline underline-offset-4"
+              >
+                Ouvrir la capture en grand
+              </a>
+            </p>
           </div>
         )}
 
@@ -103,6 +117,7 @@ export function CarteBug({
 
       <div className="border-t-2 border-nuit bg-nuit px-4 py-2 font-mono text-xs text-white">
         Testé sur {[appareil, navigateur].filter(Boolean).join(", ")}
+        {date && ` · ${date}`}
       </div>
     </article>
   );

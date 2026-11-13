@@ -36,7 +36,8 @@ async function compresser(fichier: File): Promise<{ data: string; type: string }
         lecteur.onerror = () => echec(lecteur.error);
         lecteur.readAsDataURL(blob);
       });
-      return { data: adresse.slice(adresse.indexOf(",") + 1), type: "image/jpeg" };
+      // Forme attendue par le script : « data:image/jpeg;base64,… ».
+      return { data: adresse, type: "image/jpeg" };
     }
   }
   throw new Error("image trop lourde");
@@ -202,9 +203,9 @@ export function FormulaireBug() {
               className="champ font-mono uppercase tracking-widest"
             />
           </div>
-          <Champ nom="nom" label="Votre nom" autoComplete="name" />
+          <Champ nom="testeur" label="Votre nom" autoComplete="name" />
           <Champ
-            nom="whatsapp"
+            nom="whatsappTesteur"
             label="Votre numéro WhatsApp"
             type="tel"
             autoComplete="tel"
