@@ -28,25 +28,38 @@ export async function POST(request: Request) {
     const diagnostic = await analyser(lien);
 
     // L'enregistrement ne doit pas empêcher d'afficher le résultat.
+    const ligne = {
+      type: "diagnostic",
+      lien: diagnostic.lien,
+      performance: diagnostic.performance,
+      accessibilite: diagnostic.accessibilite,
+      bonnesPratiques: diagnostic.bonnesPratiques,
+      seo: diagnostic.seo,
+      lcp: diagnostic.lcp ?? "",
+      whatsapp,
+    };
+    // Journal : ce qui part vers le script (le numéro WhatsApp n'est pas recopié).
+    console.log(
+      "[diagnostic] envoi au script :",
+      JSON.stringify({ ...ligne, whatsapp: whatsapp ? "(renseigné)" : "(vide)" }),
+    );
+
+    let enregistre = false;
     try {
-      const enregistrement = await envoyerAuScript({
-        type: "diagnostic",
-        lien: diagnostic.lien,
-        performance: diagnostic.performance,
-        accessibilite: diagnostic.accessibilite,
-        bonnesPratiques: diagnostic.bonnesPratiques,
-        seo: diagnostic.seo,
-        lcp: diagnostic.lcp ?? "",
-        whatsapp,
-      });
-      if (!enregistrement.ok) {
-        console.error("Diagnostic non enregistré :", enregistrement.error);
+      const enregistrement = await envoyerAuScript(ligne);
+      enregistre = enregistrement.ok === true;
+      if (!enregistre) {
+        console.error(
+          "[diagnostic] NON enregistré, le script a répondu :",
+          enregistrement.error ?? JSON.stringify(enregistrement),
+        );
       }
     } catch (erreur) {
-      console.error("Diagnostic non enregistré :", erreur);
+      console.error("[diagnostic] NON enregistré, l'appel au script a échoué :", erreur);
     }
 
-    return Response.json({ ok: true, diagnostic });
+    // « enregistre » indique si la ligne a bien été ajoutée dans l'onglet Diagnostics.
+    return Response.json({ ok: true, diagnostic, enregistre });
   } catch (erreur) {
     if (erreur instanceof DiagnosticImpossible) {
       return Response.json({ ok: false, error: erreur.message }, { status: 502 });
