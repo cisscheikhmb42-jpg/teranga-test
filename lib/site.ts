@@ -56,3 +56,23 @@ export const VERSIONS_ANDROID = [
   "Android 9 ou moins",
   "Je ne sais pas",
 ] as const;
+
+export const GRAVITES = [
+  {
+    nom: "Bloquant",
+    explication:
+      "Impossible de continuer : on ne peut pas s'inscrire, commander ou payer.",
+  },
+  {
+    nom: "Majeur",
+    explication:
+      "Une fonction importante marche mal, mais on arrive quand même à continuer.",
+  },
+  {
+    nom: "Mineur",
+    explication:
+      "Un détail gênant : faute d'orthographe, affichage décalé, petite lenteur.",
+  },
+] as const;
+
+export type Gravite = (typeof GRAVITES)[number]["nom"];

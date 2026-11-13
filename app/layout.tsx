@@ -35,8 +35,8 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       className={`${bricolage.variable} ${atkinson.variable} h-full antialiased`}
     >
       <body className="flex min-h-full flex-col">
-        <div className="ruban" aria-hidden="true" />
-        <header className="border-b border-trait">
+        <div className="ruban print:hidden" aria-hidden="true" />
+        <header className="border-b border-trait print:hidden">
           <div className="mx-auto flex w-full max-w-5xl items-center justify-between gap-4 px-4 py-3">
             <Link
               href="/"
@@ -60,7 +60,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
 
         <main className="flex-1">{children}</main>
 
-        <footer className="border-t border-trait bg-surface">
+        <footer className="border-t border-trait bg-surface print:hidden">
           <div className="mx-auto flex w-full max-w-5xl flex-col gap-4 px-4 py-8 sm:flex-row sm:items-center sm:justify-between">
             <p>
               <span className="font-titre font-extrabold">Teranga Test</span>
@@ -75,6 +75,11 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <li>
                 <Link href="/testeur" className="underline underline-offset-4">
                   Devenir testeur
+                </Link>
+              </li>
+              <li>
+                <Link href="/signaler" className="underline underline-offset-4">
+                  Signaler un bug
                 </Link>
               </li>
               <li>

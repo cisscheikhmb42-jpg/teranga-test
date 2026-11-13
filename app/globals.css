@@ -11,6 +11,7 @@
   --trait: color-mix(in srgb, #14213d 16%, transparent);
   --bug-texte: #c93b3b;
   --valide-texte: #1e7f52;
+  --alerte-texte: #b45309;
   --focus: #14213d;
 }
 
@@ -24,6 +25,7 @@
     --trait: color-mix(in srgb, #ffffff 20%, transparent);
     --bug-texte: color-mix(in srgb, #c93b3b 45%, #ffffff);
     --valide-texte: color-mix(in srgb, #1e7f52 40%, #ffffff);
+    --alerte-texte: color-mix(in srgb, #c2410c 40%, #ffffff);
     --focus: #ffc93c;
   }
 }
@@ -34,6 +36,8 @@
   --color-brume: #eef2f7;
   --color-bug: #c93b3b;
   --color-valide: #1e7f52;
+  --color-alerte: #c2410c;
+  --color-mineur: #5b6577;
   --color-fond: var(--fond);
   --color-surface: var(--surface);
   --color-carte: var(--carte);
@@ -42,6 +46,7 @@
   --color-trait: var(--trait);
   --color-bug-texte: var(--bug-texte);
   --color-valide-texte: var(--valide-texte);
+  --color-alerte-texte: var(--alerte-texte);
   --font-titre: var(--font-bricolage), system-ui, sans-serif;
   --font-texte: var(--font-atkinson), system-ui, sans-serif;
 }
@@ -126,4 +131,54 @@ h3 {
 }
 .champ:hover {
   border-color: var(--doux);
+}
+
+/* Impression et « Télécharger en PDF » : toujours en clair, sans menu ni boutons. */
+@media print {
+  :root {
+    color-scheme: light;
+    --fond: #ffffff;
+    --surface: #eef2f7;
+    --carte: #ffffff;
+    --texte: #14213d;
+    --doux: color-mix(in srgb, #14213d 74%, #ffffff);
+    --trait: color-mix(in srgb, #14213d 16%, transparent);
+    --bug-texte: #c93b3b;
+    --valide-texte: #1e7f52;
+    --alerte-texte: #b45309;
+  }
+  @page {
+    margin: 14mm 12mm;
+  }
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+  body {
+    font-size: 11pt;
+  }
+  .ne-pas-couper {
+    break-inside: avoid;
+  }
+}
+
+/* Barre d'attente du pré-diagnostic (un simple va-et-vient, coupé si l'utilisateur
+   a demandé moins d'animations). */
+@keyframes va-et-vient {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(300%);
+  }
+}
+.barre-attente {
+  animation: va-et-vient 1.6s ease-in-out infinite alternate;
+}
+@media (prefers-reduced-motion: reduce) {
+  .barre-attente {
+    animation: none;
+    width: 100%;
+    opacity: 0.6;
+  }
 }

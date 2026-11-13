@@ -7,7 +7,7 @@ import { WHATSAPP_URL } from "@/lib/site";
 type Etat =
   | { statut: "repos" }
   | { statut: "envoi" }
-  | { statut: "ok" }
+  | { statut: "ok"; donnees: Record<string, string> }
   | { statut: "erreur"; message: string };
 
 type Props = {
@@ -15,6 +15,8 @@ type Props = {
   bouton: string;
   titreConfirmation: string;
   texteConfirmation: string;
+  // Contenu ajouté sous le message de confirmation (reçoit les réponses envoyées).
+  apresConfirmation?: (donnees: Record<string, string>) => ReactNode;
   children: ReactNode;
 };
 
@@ -25,13 +27,16 @@ export function Formulaire({
   bouton,
   titreConfirmation,
   texteConfirmation,
+  apresConfirmation,
   children,
 }: Props) {
   const [etat, setEtat] = useState<Etat>({ statut: "repos" });
 
   async function envoyer(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    const donnees = Object.fromEntries(new FormData(e.currentTarget));
+    const donnees = Object.fromEntries(
+      [...new FormData(e.currentTarget)].map(([cle, v]) => [cle, String(v)]),
+    );
     setEtat({ statut: "envoi" });
 
     try {
@@ -42,7 +47,7 @@ export function Formulaire({
       });
       const resultat = await reponse.json();
       if (resultat.ok) {
-        setEtat({ statut: "ok" });
+        setEtat({ statut: "ok", donnees });
       } else {
         setEtat({
           statut: "erreur",
@@ -62,15 +67,18 @@ export function Formulaire({
 
   if (etat.statut === "ok") {
     return (
-      <div
-        role="status"
-        className="rounded-xl border-2 border-valide bg-carte p-5"
-      >
-        <h2 className="text-2xl font-extrabold text-valide-texte">
-          {titreConfirmation}
-        </h2>
-        <p className="mt-2">{texteConfirmation}</p>
-        <p className="mt-4">
+      <div className="space-y-6">
+        <div
+          role="status"
+          className="rounded-xl border-2 border-valide bg-carte p-5"
+        >
+          <h2 className="text-2xl font-extrabold text-valide-texte">
+            {titreConfirmation}
+          </h2>
+          <p className="mt-2">{texteConfirmation}</p>
+        </div>
+        {apresConfirmation?.(etat.donnees)}
+        <p>
           <Link href="/" className="underline underline-offset-4">
             Retour à l&apos;accueil
           </Link>
